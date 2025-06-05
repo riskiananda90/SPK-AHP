@@ -9,6 +9,75 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      demo_projects: {
+        Row: {
+          alternative_matrices: Json | null
+          alternatives: Json | null
+          created_at: string
+          criteria: Json | null
+          criteria_matrix: Json | null
+          expires_at: string
+          id: string
+          ip_address: string
+          problem_statement: string | null
+          project_name: string
+          results: Json | null
+        }
+        Insert: {
+          alternative_matrices?: Json | null
+          alternatives?: Json | null
+          created_at?: string
+          criteria?: Json | null
+          criteria_matrix?: Json | null
+          expires_at?: string
+          id?: string
+          ip_address: string
+          problem_statement?: string | null
+          project_name: string
+          results?: Json | null
+        }
+        Update: {
+          alternative_matrices?: Json | null
+          alternatives?: Json | null
+          created_at?: string
+          criteria?: Json | null
+          criteria_matrix?: Json | null
+          expires_at?: string
+          id?: string
+          ip_address?: string
+          problem_statement?: string | null
+          project_name?: string
+          results?: Json | null
+        }
+        Relationships: []
+      }
+      demo_usage: {
+        Row: {
+          created_at: string
+          demo_count: number | null
+          id: string
+          ip_address: string
+          last_used_at: string
+          user_agent: string | null
+        }
+        Insert: {
+          created_at?: string
+          demo_count?: number | null
+          id?: string
+          ip_address: string
+          last_used_at?: string
+          user_agent?: string | null
+        }
+        Update: {
+          created_at?: string
+          demo_count?: number | null
+          id?: string
+          ip_address?: string
+          last_used_at?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -45,80 +114,57 @@ export type Database = {
         }
         Relationships: []
       }
-      project_history: {
-        Row: {
-          action: string
-          changes: Json | null
-          created_at: string
-          id: string
-          project_id: string
-          user_id: string
-        }
-        Insert: {
-          action: string
-          changes?: Json | null
-          created_at?: string
-          id?: string
-          project_id: string
-          user_id: string
-        }
-        Update: {
-          action?: string
-          changes?: Json | null
-          created_at?: string
-          id?: string
-          project_id?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "project_history_project_id_fkey"
-            columns: ["project_id"]
-            isOneToOne: false
-            referencedRelation: "projects"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       projects: {
         Row: {
           alternatives: Json | null
+          consistency_ratio: number | null
           created_at: string
           criteria: Json | null
           description: string | null
           id: string
           method: string
+          pairwise_comparisons: Json | null
+          progress: number | null
           results: Json | null
-          status: string
+          status: string | null
           title: string
           updated_at: string
           user_id: string
+          weights: Json | null
         }
         Insert: {
           alternatives?: Json | null
-          created_at?: string
-          criteria?: Json | null
-          description?: string | null
-          id?: string
-          method: string
-          results?: Json | null
-          status?: string
-          title: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          alternatives?: Json | null
+          consistency_ratio?: number | null
           created_at?: string
           criteria?: Json | null
           description?: string | null
           id?: string
           method?: string
+          pairwise_comparisons?: Json | null
+          progress?: number | null
           results?: Json | null
-          status?: string
+          status?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+          weights?: Json | null
+        }
+        Update: {
+          alternatives?: Json | null
+          consistency_ratio?: number | null
+          created_at?: string
+          criteria?: Json | null
+          description?: string | null
+          id?: string
+          method?: string
+          pairwise_comparisons?: Json | null
+          progress?: number | null
+          results?: Json | null
+          status?: string | null
           title?: string
           updated_at?: string
           user_id?: string
+          weights?: Json | null
         }
         Relationships: []
       }
@@ -126,7 +172,6 @@ export type Database = {
         Row: {
           completed_projects: number | null
           created_at: string
-          favorite_method: string | null
           id: string
           in_progress_projects: number | null
           last_active: string | null
@@ -137,7 +182,6 @@ export type Database = {
         Insert: {
           completed_projects?: number | null
           created_at?: string
-          favorite_method?: string | null
           id?: string
           in_progress_projects?: number | null
           last_active?: string | null
@@ -148,7 +192,6 @@ export type Database = {
         Update: {
           completed_projects?: number | null
           created_at?: string
-          favorite_method?: string | null
           id?: string
           in_progress_projects?: number | null
           last_active?: string | null
@@ -163,7 +206,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      cleanup_expired_demo_projects: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

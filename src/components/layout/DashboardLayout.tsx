@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -164,10 +163,6 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
                 <DropdownMenuItem onClick={() => navigate('/profile')}>
                   <User className="w-4 h-4 mr-2" />
                   Profile
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate('/settings')}>
-                  <Settings className="w-4 h-4 mr-2" />
-                  Settings
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={toggleTheme}>
                   {theme === 'dark' ? (

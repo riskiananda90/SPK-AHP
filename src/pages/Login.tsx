@@ -9,10 +9,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Checkbox } from '@/components/ui/checkbox';
 import { Calculator, Eye, EyeOff, Mail, Lock } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Login = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { signIn } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -25,15 +27,26 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
 
-    // Simulate API call
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      const { data, error } = await signIn(formData.email, formData.password);
+      
+      if (error) throw error;
+
       toast({
         title: "Login Berhasil",
         description: "Selamat datang kembali di DSS Tools!",
       });
       navigate('/dashboard');
-    }, 1500);
+    } catch (error: any) {
+      console.error('Login error:', error);
+      toast({
+        title: "Login Gagal",
+        description: error.message || "Email atau password salah.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -1,8 +1,7 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowRight, BarChart3, Calculator, TrendingUp, Users, Shield, Zap } from 'lucide-react';
+import { ArrowRight, Calculator, TrendingUp, Users, Shield, Zap, CheckCircle, BookOpen } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 
@@ -10,23 +9,23 @@ const Index = () => {
   const navigate = useNavigate();
   const [hoveredFeature, setHoveredFeature] = useState<number | null>(null);
 
-  const features = [
+  const ahpFeatures = [
     {
       icon: Calculator,
-      title: "AHP Method",
-      description: "Analytic Hierarchy Process untuk pengambilan keputusan multi-kriteria",
+      title: "Perbandingan Berpasangan",
+      description: "Bandingkan kriteria dan alternatif secara sistematis dengan metode pairwise comparison",
       gradient: "from-blue-500 to-cyan-500"
     },
     {
-      icon: BarChart3,
-      title: "SAW Method", 
-      description: "Simple Additive Weighting dengan normalisasi yang akurat",
+      icon: TrendingUp,
+      title: "Konsistensi Rasio",
+      description: "Validasi otomatis konsistensi penilaian dengan Consistency Ratio (CR)",
       gradient: "from-purple-500 to-pink-500"
     },
     {
-      icon: TrendingUp,
-      title: "TOPSIS Method",
-      description: "Technique for Order Preference by Similarity to Ideal Solution",
+      icon: CheckCircle,
+      title: "Ranking Alternatif",
+      description: "Dapatkan ranking alternatif berdasarkan bobot prioritas yang akurat",
       gradient: "from-orange-500 to-red-500"
     }
   ];
@@ -63,7 +62,7 @@ const Index = () => {
               <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-lg flex items-center justify-center">
                 <Calculator className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xl font-bold text-slate-800">DSS Tools</span>
+              <span className="text-xl font-bold text-slate-800">AHP Tools</span>
             </motion.div>
             
             <motion.div 
@@ -71,6 +70,14 @@ const Index = () => {
               animate={{ opacity: 1, x: 0 }}
               className="flex items-center space-x-4"
             >
+              <Button 
+                variant="ghost" 
+                onClick={() => navigate('/documentation')}
+                className="text-slate-600 hover:text-slate-800 flex items-center space-x-2"
+              >
+                <BookOpen className="w-4 h-4" />
+                <span>Dokumentasi</span>
+              </Button>
               <Button 
                 variant="ghost" 
                 onClick={() => navigate('/login')}
@@ -99,9 +106,9 @@ const Index = () => {
               transition={{ duration: 0.8 }}
               className="text-5xl md:text-6xl font-bold text-slate-800 mb-6"
             >
-              Decision Support System
+              Analytic Hierarchy Process
               <span className="block bg-gradient-to-r from-blue-600 via-cyan-600 to-purple-600 bg-clip-text text-transparent">
-                Tools Platform
+                Decision Support System
               </span>
             </motion.h1>
             
@@ -111,8 +118,8 @@ const Index = () => {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="text-xl text-slate-600 mb-8 max-w-3xl mx-auto leading-relaxed"
             >
-              Platform terdepan untuk pengambilan keputusan berbasis data dengan implementasi metode AHP, SAW, dan TOPSIS. 
-              Buat keputusan yang lebih baik dengan analisis yang komprehensif.
+              Platform terdepan untuk pengambilan keputusan dengan metode AHP (Analytic Hierarchy Process). 
+              Buat keputusan yang lebih objektif dengan analisis perbandingan berpasangan yang sistematis.
             </motion.p>
             
             <motion.div 
@@ -132,16 +139,26 @@ const Index = () => {
               <Button 
                 size="lg" 
                 variant="outline"
+                onClick={() => navigate('/demo-ahp')}
                 className="border-2 border-slate-300 text-slate-700 hover:bg-slate-50 px-8 py-3 text-lg"
               >
-                Lihat Demo
+                Lihat Demo AHP
+              </Button>
+              <Button 
+                size="lg" 
+                variant="outline"
+                onClick={() => navigate('/learn-ahp')}
+                className="border-2 border-blue-300 text-blue-700 hover:bg-blue-50 px-8 py-3 text-lg flex items-center space-x-2"
+              >
+                <BookOpen className="w-5 h-5" />
+                <span>Pelajari AHP</span>
               </Button>
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
+      {/* AHP Features Section */}
       <section className="py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <motion.div 
@@ -151,15 +168,15 @@ const Index = () => {
             className="text-center mb-16"
           >
             <h2 className="text-4xl font-bold text-slate-800 mb-4">
-              Metode Analisis Terdepan
+              Fitur Lengkap Metode AHP
             </h2>
             <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-              Implementasi tiga metode pengambilan keputusan terbaik dalam satu platform terintegrasi
+              Implementasi komprehensif metode Analytic Hierarchy Process dengan antarmuka yang mudah digunakan
             </p>
           </motion.div>
           
           <div className="grid md:grid-cols-3 gap-8">
-            {features.map((feature, index) => {
+            {ahpFeatures.map((feature, index) => {
               const Icon = feature.icon;
               return (
                 <motion.div
@@ -207,10 +224,10 @@ const Index = () => {
             className="text-center mb-16"
           >
             <h2 className="text-4xl font-bold text-slate-800 mb-4">
-              Mengapa Memilih DSS Tools?
+              Mengapa Memilih AHP Tools?
             </h2>
             <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-              Platform yang dirancang khusus untuk memudahkan analisis dan pengambilan keputusan
+              Platform yang dirancang khusus untuk memudahkan implementasi metode AHP dalam pengambilan keputusan
             </p>
           </motion.div>
           
@@ -246,18 +263,29 @@ const Index = () => {
             transition={{ duration: 0.8 }}
           >
             <h2 className="text-4xl font-bold text-slate-800 mb-6">
-              Siap Membuat Keputusan yang Lebih Baik?
+              Siap Membuat Keputusan dengan AHP?
             </h2>
             <p className="text-xl text-slate-600 mb-8">
-              Bergabung dengan ribuan profesional yang sudah menggunakan DSS Tools untuk analisis mereka
+              Bergabung dengan ribuan profesional yang sudah menggunakan AHP Tools untuk analisis mereka
             </p>
-            <Button 
-              size="lg"
-              onClick={() => navigate('/register')}
-              className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white px-12 py-4 text-lg shadow-lg hover:shadow-xl transition-all duration-300"
-            >
-              Mulai Sekarang - Gratis
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button 
+                size="lg"
+                onClick={() => navigate('/register')}
+                className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white px-12 py-4 text-lg shadow-lg hover:shadow-xl transition-all duration-300"
+              >
+                Mulai Sekarang - Gratis
+              </Button>
+              <Button 
+                size="lg" 
+                variant="outline"
+                onClick={() => navigate('/learn-ahp')}
+                className="border-2 border-blue-300 text-blue-700 hover:bg-blue-50 px-12 py-4 text-lg flex items-center space-x-2"
+              >
+                <BookOpen className="w-5 h-5" />
+                <span>Pelajari Lebih Lanjut</span>
+              </Button>
+            </div>
           </motion.div>
         </div>
       </section>
@@ -269,10 +297,10 @@ const Index = () => {
             <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-lg flex items-center justify-center">
               <Calculator className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-bold">DSS Tools</span>
+            <span className="text-xl font-bold">AHP Tools</span>
           </div>
           <p className="text-slate-400">
-            © 2024 DSS Tools. Platform Decision Support System terdepan di Indonesia.
+            © 2024 AHP Tools. Platform Analytic Hierarchy Process terdepan di Indonesia.
           </p>
         </div>
       </footer>

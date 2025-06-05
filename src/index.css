@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -35,19 +36,12 @@
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
@@ -55,10 +49,10 @@
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
 
-    --card: 222.2 84% 4.9%;
+    --card: 217.2 32.6% 17.5%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 222.2 84% 4.9%;
+    --popover: 217.2 32.6% 17.5%;
     --popover-foreground: 210 40% 98%;
 
     --primary: 210 40% 98%;
@@ -97,5 +91,62 @@
 
   body {
     @apply bg-background text-foreground;
+  }
+
+  /* Fix dark theme text visibility */
+  .dark {
+    color-scheme: dark;
+  }
+
+  .dark * {
+    border-color: hsl(var(--border));
+  }
+
+  .dark .bg-white {
+    @apply bg-card;
+  }
+
+  .dark .text-slate-800 {
+    @apply text-foreground;
+  }
+
+  .dark .text-slate-600 {
+    @apply text-muted-foreground;
+  }
+
+  .dark .text-slate-700 {
+    @apply text-foreground;
+  }
+
+  .dark .text-gray-600 {
+    @apply text-muted-foreground;
+  }
+
+  .dark .text-gray-700 {
+    @apply text-foreground;
+  }
+
+  .dark .text-gray-800 {
+    @apply text-foreground;
+  }
+
+  .dark .bg-slate-50 {
+    @apply bg-background;
+  }
+
+  .dark .bg-gray-50 {
+    @apply bg-background;
+  }
+
+  .dark .bg-white\/50 {
+    @apply bg-card/50;
+  }
+
+  .dark .bg-white\/70 {
+    @apply bg-card/70;
+  }
+
+  .dark .bg-white\/80 {
+    @apply bg-card/80;
   }
 }

@@ -17,6 +17,7 @@ import NewProject from "./pages/NewProject";
 import CreateProjectAHP from "./pages/CreateProjectAHP";
 import ProjectDetail from "./pages/ProjectDetail";
 import NotFound from "./pages/NotFound";
+import Documentation from "./pages/Documentation";
 import LearnAHP from "./pages/LearnAHP";
 import DemoAHP from "./pages/DemoAHP";
 
@@ -38,11 +39,13 @@ const App = () => (
               <Route path="/profile" element={<Profile />} />
               <Route path="/projects" element={<Projects />} />
               <Route path="/analytics" element={<Analytics />} />
+              <Route path="/documentation" element={<Documentation />} />
               <Route path="/learn-ahp" element={<LearnAHP />} />
               <Route path="/new-project" element={<NewProject />} />
               <Route path="/create-project/ahp" element={<CreateProjectAHP />} />
               <Route path="/project/:id" element={<ProjectDetail />} />
               <Route path="/demo-ahp" element={<DemoAHP />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

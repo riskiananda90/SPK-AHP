@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -241,7 +240,10 @@ const Projects = () => {
                           variant="outline"
                           size="sm"
                           className="flex-1"
-                          onClick={() => navigate(`/create-project/ahp?projectId=${project.id}`)}
+                          onClick={() => {
+                            console.log('Navigating to edit project:', project.id);
+                            navigate(`/create-project/ahp?projectId=${project.id}`);
+                          }}
                         >
                           <Edit3 className="w-4 h-4 mr-1" />
                           Edit

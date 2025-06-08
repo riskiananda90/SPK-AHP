@@ -72,6 +72,14 @@ const Index = () => {
             >
               <Button 
                 variant="ghost" 
+                onClick={() => navigate('/documentation')}
+                className="text-slate-600 hover:text-slate-800 flex items-center space-x-2"
+              >
+                <BookOpen className="w-4 h-4" />
+                <span>Dokumentasi</span>
+              </Button>
+              <Button 
+                variant="ghost" 
                 onClick={() => navigate('/login')}
                 className="text-slate-600 hover:text-slate-800"
               >

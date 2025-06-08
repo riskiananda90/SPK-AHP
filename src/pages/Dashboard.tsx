@@ -1,8 +1,9 @@
+
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Plus, Calculator, BarChart3, TrendingUp, FolderOpen, Clock, Users, Zap, Target, Award } from 'lucide-react';
+import { Plus, Calculator, BarChart3, TrendingUp, FolderOpen, Clock, Users, Zap, Target, Award, Scale, Layers, Grid3X3, TreePine, Workflow } from 'lucide-react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { useNavigate } from 'react-router-dom';
 import { useProjects } from '@/hooks/useProjects';
@@ -56,6 +57,63 @@ const Dashboard = () => {
     }
   ];
 
+  const methods = [
+    {
+      id: 'ahp',
+      icon: Calculator,
+      title: 'Metode AHP',
+      description: 'Analytic Hierarchy Process untuk pengambilan keputusan multi-kriteria yang akurat dan terstruktur',
+      available: true,
+      color: 'from-blue-500 to-cyan-500',
+      projectCount: projects.length
+    },
+    {
+      id: 'topsis',
+      icon: BarChart3,
+      title: 'Metode TOPSIS',
+      description: 'Technique for Order Preference by Similarity to Ideal Solution untuk ranking alternatif',
+      available: false,
+      color: 'from-green-500 to-emerald-500',
+      projectCount: 0
+    },
+    {
+      id: 'saw',
+      icon: Scale,
+      title: 'Metode SAW',
+      description: 'Simple Additive Weighting untuk penjumlahan berbobot dari rating kinerja',
+      available: false,
+      color: 'from-purple-500 to-pink-500',
+      projectCount: 0
+    },
+    {
+      id: 'electre',
+      icon: Layers,
+      title: 'Metode ELECTRE',
+      description: 'ELimination Et Choix Traduisant la REalité untuk eliminasi dan pemilihan alternatif',
+      available: false,
+      color: 'from-orange-500 to-red-500',
+      projectCount: 0
+    },
+    {
+      id: 'promethee',
+      icon: Grid3X3,
+      title: 'Metode PROMETHEE',
+      description: 'Preference Ranking Organization METHod for Enrichment Evaluations',
+      available: false,
+      color: 'from-indigo-500 to-purple-500',
+      projectCount: 0
+    },
+    {
+      id: 'wp',
+      icon: TreePine,
+      title: 'Metode WP',
+      description: 'Weighted Product untuk perkalian untuk menghubungkan rating atribut',
+      available: false,
+      color: 'from-teal-500 to-green-500',
+      projectCount: 0
+    }
+  ];
+
   const features = [
     {
       icon: Zap,
@@ -65,7 +123,7 @@ const Dashboard = () => {
     {
       icon: Target,
       title: 'Hasil Akurat',
-      description: 'Algoritma AHP yang terpercaya dan teruji'
+      description: 'Algoritma yang terpercaya dan teruji'
     },
     {
       icon: BarChart3,
@@ -74,7 +132,13 @@ const Dashboard = () => {
     }
   ];
 
-  const handleQuickCreate = () => {
+  const handleMethodClick = (method: any) => {
+    if (method.available) {
+      navigate('/create-project/ahp');
+    }
+  };
+
+  const handleCreateProject = () => {
     navigate('/create-project/ahp');
   };
 
@@ -107,10 +171,10 @@ const Dashboard = () => {
           className="text-center"
         >
           <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent mb-4">
-            AHP Decision Support System
+            Multi-Criteria Decision Support System
           </h1>
           <p className="text-slate-600 text-lg max-w-2xl mx-auto">
-            Analytic Hierarchy Process yang membantu Anda membuat keputusan yang tepat dengan pendekatan ilmiah dan terstruktur.
+            Platform pengambilan keputusan dengan berbagai metode ilmiah yang membantu Anda membuat keputusan yang tepat dan terstruktur.
           </p>
         </motion.div>
 
@@ -145,55 +209,95 @@ const Dashboard = () => {
           })}
         </motion.div>
 
-        {/* Quick Action - Single AHP Card */}
+        {/* Methods Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          <h2 className="text-2xl font-bold text-slate-800 mb-6">Mulai Analisis AHP</h2>
-          <div className="max-w-md mx-auto">
-            <motion.div
-              onHoverStart={() => setHoveredCard(0)}
-              onHoverEnd={() => setHoveredCard(null)}
-              whileHover={{ y: -8, scale: 1.02 }}
-              transition={{ duration: 0.3 }}
-            >
-              <Card className="cursor-pointer hover:shadow-2xl transition-all duration-300 border-0 bg-gradient-to-br from-white via-blue-50 to-cyan-50 relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-cyan-600/10" />
-                <CardHeader className="text-center pb-4 relative">
-                  <motion.div 
-                    className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center mb-6 shadow-xl"
-                    animate={{ 
-                      scale: hoveredCard === 0 ? 1.1 : 1,
-                      rotate: hoveredCard === 0 ? 5 : 0
-                    }}
-                    transition={{ duration: 0.3 }}
+          <h2 className="text-2xl font-bold text-slate-800 mb-6">Metode Pengambilan Keputusan</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {methods.map((method, index) => {
+              const Icon = method.icon;
+              return (
+                <motion.div
+                  key={method.id}
+                  onHoverStart={() => setHoveredCard(index)}
+                  onHoverEnd={() => setHoveredCard(null)}
+                  whileHover={{ y: method.available ? -8 : -2, scale: method.available ? 1.02 : 1.01 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <Card 
+                    className={`cursor-pointer transition-all duration-300 border-0 bg-gradient-to-br from-white via-slate-50 to-slate-100 relative overflow-hidden ${
+                      method.available 
+                        ? 'hover:shadow-2xl' 
+                        : 'opacity-75 cursor-not-allowed hover:shadow-lg'
+                    }`}
+                    onClick={() => handleMethodClick(method)}
                   >
-                    <Calculator className="w-10 h-10 text-white" />
-                  </motion.div>
-                  <CardTitle className="text-2xl text-slate-800 mb-2">Metode AHP</CardTitle>
-                  <CardDescription className="text-slate-600 text-base">
-                    Analytic Hierarchy Process untuk pengambilan keputusan multi-kriteria yang akurat dan terstruktur
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="pt-0 relative">
-                  <div className="text-center mb-6">
-                    <span className="text-sm text-slate-500 bg-blue-100 px-3 py-1 rounded-full">
-                      {projects.length} project aktif
-                    </span>
-                  </div>
-                  <Button 
-                    onClick={handleQuickCreate}
-                    className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-semibold py-3 text-base shadow-lg hover:shadow-xl transition-all duration-300"
-                    size="lg"
-                  >
-                    <Plus className="w-5 h-5 mr-2" />
-                    Buat Project AHP
-                  </Button>
-                </CardContent>
-              </Card>
-            </motion.div>
+                    <div className={`absolute inset-0 bg-gradient-to-r ${method.color} ${method.available ? 'opacity-10' : 'opacity-5'}`} />
+                    <CardHeader className="text-center pb-4 relative">
+                      <motion.div 
+                        className={`w-20 h-20 mx-auto rounded-2xl bg-gradient-to-r ${method.color} flex items-center justify-center mb-6 shadow-xl`}
+                        animate={{ 
+                          scale: hoveredCard === index ? 1.1 : 1,
+                          rotate: hoveredCard === index && method.available ? 5 : 0
+                        }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <Icon className="w-10 h-10 text-white" />
+                      </motion.div>
+                      <CardTitle className="text-xl text-slate-800 mb-2 flex items-center justify-center gap-2">
+                        {method.title}
+                        {!method.available && (
+                          <span className="bg-orange-100 text-orange-600 text-xs px-2 py-1 rounded-full font-normal">
+                            Coming Soon
+                          </span>
+                        )}
+                      </CardTitle>
+                      <CardDescription className="text-slate-600 text-sm">
+                        {method.description}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="pt-0 relative">
+                      <div className="text-center mb-6">
+                        <span className={`text-sm px-3 py-1 rounded-full ${
+                          method.available 
+                            ? 'text-slate-500 bg-blue-100' 
+                            : 'text-orange-600 bg-orange-100'
+                        }`}>
+                          {method.available 
+                            ? `${method.projectCount} project aktif` 
+                            : 'Segera hadir'
+                          }
+                        </span>
+                      </div>
+                      <Button 
+                        className={`w-full font-semibold py-3 text-base shadow-lg transition-all duration-300 ${
+                          method.available
+                            ? `bg-gradient-to-r ${method.color} hover:shadow-xl text-white`
+                            : 'bg-gray-300 text-gray-500 cursor-not-allowed hover:bg-gray-300'
+                        }`}
+                        size="lg"
+                        disabled={!method.available}
+                      >
+                        {method.available ? (
+                          <>
+                            <Plus className="w-5 h-5 mr-2" />
+                            Buat Project {method.title.split(' ')[1]}
+                          </>
+                        ) : (
+                          <>
+                            <Workflow className="w-5 h-5 mr-2" />
+                            Segera Hadir
+                          </>
+                        )}
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              );
+            })}
           </div>
         </motion.div>
 
@@ -203,7 +307,7 @@ const Dashboard = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
         >
-          <h2 className="text-2xl font-bold text-slate-800 mb-6 text-center">Keunggulan AHP</h2>
+          <h2 className="text-2xl font-bold text-slate-800 mb-6 text-center">Keunggulan Platform</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {features.map((feature, index) => {
               const Icon = feature.icon;
@@ -247,7 +351,7 @@ const Dashboard = () => {
                   <FolderOpen className="w-12 h-12 mx-auto text-gray-400 mb-4" />
                   <h3 className="text-lg font-semibold text-gray-600 mb-2">Belum ada project terbaru</h3>
                   <p className="text-gray-500 mb-4">Buat project AHP pertama Anda untuk mulai analisis</p>
-                  <Button onClick={handleQuickCreate} className="bg-gradient-to-r from-blue-600 to-cyan-600">
+                  <Button onClick={handleCreateProject} className="bg-gradient-to-r from-blue-600 to-cyan-600">
                     <Plus className="w-4 h-4 mr-2" />
                     Buat Project Baru
                   </Button>

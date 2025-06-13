@@ -247,114 +247,207 @@ const CreateProjectAHP = () => {
     setActiveTab(`step-${step + 1}`);
   };
 
-  const calculateAHP = async () => {
-    setIsCalculating(true);
-    try {
-      // 1. Normalisasi Matriks Perbandingan Kriteria
-      const criteriaMatrix = criteria.map(c1 =>
-        criteria.map(c2 => {
-          if (c1.id === c2.id) return 1;
-          const comparisonValue = getCriteriaComparisonValue(c1.id, c2.id);
-          return c1.id < c2.id ? comparisonValue : 1 / comparisonValue;
-        })
-      );
-
-      // 2. Hitung Bobot Prioritas Kriteria
-      const criteriaSums = criteriaMatrix.map(col => col.reduce((sum, val) => sum + val, 0));
-      const criteriaWeights = criteriaMatrix.map((col, i) => {
-        const sum = criteriaSums[i];
-        return criteria.map((c, j) => ({
-          criteria: c,
-          weight: col[j] / sum
-        }));
-      });
-
-      const finalCriteriaWeights = criteria.map((c, i) => ({
-        criteria: c,
-        weight: criteriaWeights.reduce((sum, col) => sum + col[i].weight, 0) / criteria.length
-      }));
-
-      // 3. Normalisasi Matriks Perbandingan Alternatif (terhadap setiap kriteria)
-      const alternativeMatrices = criteria.map(criterion => {
-        return alternatives.map(a1 =>
-          alternatives.map(a2 => {
-            if (a1.id === a2.id) return 1;
-            const comparisonValue = getAlternativeComparisonValue(a1.id, a2.id, criterion.id);
-            return a1.id < a2.id ? comparisonValue : 1 / comparisonValue;
-          })
-        );
-      });
-
-      // 4. Hitung Bobot Prioritas Alternatif (terhadap setiap kriteria)
-      const alternativeWeightsByCriteria = alternativeMatrices.map(matrix => {
-        const alternativeSums = matrix.map(col => col.reduce((sum, val) => sum + val, 0));
-        return matrix.map((col, i) => {
-          const sum = alternativeSums[i];
-          return alternatives.map((a, j) => ({
-            alternative: a,
-            weight: col[j] / sum
-          }));
-        });
-      });
-
-      const finalAlternativeWeightsByCriteria = criteria.map((criterion, i) => ({
-        criteria: criterion,
-        weights: alternatives.map((a, j) => ({
-          alternative: a,
-          weight: alternativeWeightsByCriteria[i].reduce((sum, col) => sum + col[j].weight, 0) / alternatives.length
-        }))
-      }));
-
-      // 5. Hitung Skor Akhir Alternatif
-      const alternativeScores = alternatives.map(alternative => {
-        let score = 0;
-        finalCriteriaWeights.forEach(criterionWeight => {
-          const alternativeWeight = finalAlternativeWeightsByCriteria
-            .find(aw => aw.criteria.id === criterionWeight.criteria.id)
-            ?.weights.find(w => w.alternative.id === alternative.id)?.weight || 0;
-          score += criterionWeight.weight * alternativeWeight;
-        });
-        return {
-          id: alternative.id,
-          name: alternative.name,
-          score
-        };
-      });
-
-      // 6. Ranking Alternatif
-      const rankedAlternatives = alternativeScores.sort((a, b) => b.score - a.score)
-        .map((alt, index) => ({ ...alt, rank: index + 1 }));
-
-      // Consistency Ratio Calculation (Simplified - needs actual matrix operations for real CR)
-      const consistencyRatio = {
-        cr: 0.05, // Placeholder value - replace with actual calculation
-        isConsistent: true // Placeholder value - replace with actual logic
-      };
-
-      setResults({
-        criteriaWeights: finalCriteriaWeights,
-        alternatives: rankedAlternatives,
-        consistency: consistencyRatio
-      });
-
-      toast({
-        title: "Success",
-        description: "Perhitungan AHP selesai!",
-      });
-      setCurrentStep(5);
-      setActiveTab('step-6');
-    } catch (error: any) {
-      console.error("Error calculating AHP:", error);
-      toast({
-        title: "Error",
-        description: "Gagal menghitung AHP",
-        variant: "destructive"
-      });
-    } finally {
-      setIsCalculating(false);
+const calculateAHP = async () => {
+  setIsCalculating(true);
+  try {
+    // 1. Buat Matriks Perbandingan Kriteria
+    const n = criteria.length;
+    const criteriaMatrix = [];
+    
+    // Inisialisasi matriks dengan nilai 1 pada diagonal
+    for (let i = 0; i < n; i++) {
+      criteriaMatrix[i] = [];
+      for (let j = 0; j < n; j++) {
+        if (i === j) {
+          criteriaMatrix[i][j] = 1;
+        } else if (i < j) {
+          // Ambil nilai dari perbandingan yang telah diinput
+          const comparisonValue = getCriteriaComparisonValue(criteria[i].id, criteria[j].id);
+          criteriaMatrix[i][j] = comparisonValue;
+        } else {
+          // Kebalikan dari nilai di atas diagonal
+          criteriaMatrix[i][j] = 1 / criteriaMatrix[j][i];
+        }
+      }
     }
-  };
 
+    // 2. Hitung Bobot Kriteria menggunakan Eigenvalue Method
+    const criteriaWeights = [];
+    
+    // Hitung jumlah setiap kolom
+    const columnSums = [];
+    for (let j = 0; j < n; j++) {
+      let sum = 0;
+      for (let i = 0; i < n; i++) {
+        sum += criteriaMatrix[i][j];
+      }
+      columnSums[j] = sum;
+    }
+    
+    // Normalisasi matriks
+    const normalizedMatrix = [];
+    for (let i = 0; i < n; i++) {
+      normalizedMatrix[i] = [];
+      for (let j = 0; j < n; j++) {
+        normalizedMatrix[i][j] = criteriaMatrix[i][j] / columnSums[j];
+      }
+    }
+    
+    // Hitung bobot dengan mengambil rata-rata tiap baris
+    for (let i = 0; i < n; i++) {
+      let rowSum = 0;
+      for (let j = 0; j < n; j++) {
+        rowSum += normalizedMatrix[i][j];
+      }
+      criteriaWeights.push({
+        criteria: criteria[i],
+        weight: rowSum / n
+      });
+    }
+
+    // 3. Hitung Consistency Ratio (CR) untuk kriteria
+    // Lambda max
+    let lambdaMax = 0;
+    for (let i = 0; i < n; i++) {
+      let sum = 0;
+      for (let j = 0; j < n; j++) {
+        sum += criteriaMatrix[i][j] * criteriaWeights[j].weight;
+      }
+      lambdaMax += sum / criteriaWeights[i].weight;
+    }
+    lambdaMax = lambdaMax / n;
+    
+    // Consistency Index (CI)
+    const CI = (lambdaMax - n) / (n - 1);
+    
+    // Random Index (RI) values
+    const RI = [0, 0, 0.52, 0.89, 1.11, 1.25, 1.35, 1.40, 1.45, 1.49];
+    const randomIndex = n < RI.length ? RI[n] : RI[9];
+    
+    // Consistency Ratio (CR)
+    const CR = CI / randomIndex;
+    const isConsistent = CR <= 0.1;
+
+    // 4. Hitung Bobot Alternatif untuk setiap kriteria
+    const alternativeWeightsByCriteria = [];
+    const m = alternatives.length;
+
+    for (let criteriaIndex = 0; criteriaIndex < criteria.length; criteriaIndex++) {
+      const criterion = criteria[criteriaIndex];
+      
+      // Buat matriks perbandingan alternatif untuk kriteria ini
+      const alternativeMatrix = [];
+      for (let i = 0; i < m; i++) {
+        alternativeMatrix[i] = [];
+        for (let j = 0; j < m; j++) {
+          if (i === j) {
+            alternativeMatrix[i][j] = 1;
+          } else if (i < j) {
+            const comparisonValue = getAlternativeComparisonValue(
+              alternatives[i].id, 
+              alternatives[j].id, 
+              criterion.id
+            );
+            alternativeMatrix[i][j] = comparisonValue;
+          } else {
+            alternativeMatrix[i][j] = 1 / alternativeMatrix[j][i];
+          }
+        }
+      }
+      
+      // Hitung bobot alternatif untuk kriteria ini
+      const altColumnSums = [];
+      for (let j = 0; j < m; j++) {
+        let sum = 0;
+        for (let i = 0; i < m; i++) {
+          sum += alternativeMatrix[i][j];
+        }
+        altColumnSums[j] = sum;
+      }
+      
+      const altNormalizedMatrix = [];
+      for (let i = 0; i < m; i++) {
+        altNormalizedMatrix[i] = [];
+        for (let j = 0; j < m; j++) {
+          altNormalizedMatrix[i][j] = alternativeMatrix[i][j] / altColumnSums[j];
+        }
+      }
+      
+      const altWeights = [];
+      for (let i = 0; i < m; i++) {
+        let rowSum = 0;
+        for (let j = 0; j < m; j++) {
+          rowSum += altNormalizedMatrix[i][j];
+        }
+        altWeights.push({
+          alternative: alternatives[i],
+          weight: rowSum / m
+        });
+      }
+      
+      alternativeWeightsByCriteria.push({
+        criteria: criterion,
+        weights: altWeights
+      });
+    }
+
+    // 5. Hitung Skor Akhir untuk setiap alternatif
+    const alternativeScores = alternatives.map(alternative => {
+      let totalScore = 0;
+      
+      for (let i = 0; i < criteria.length; i++) {
+        const criteriaWeight = criteriaWeights[i].weight;
+        const alternativeWeight = alternativeWeightsByCriteria[i].weights
+          .find(w => w.alternative.id === alternative.id)?.weight || 0;
+        
+        totalScore += criteriaWeight * alternativeWeight;
+      }
+      
+      return {
+        id: alternative.id,
+        name: alternative.name,
+        score: totalScore
+      };
+    });
+
+    // 6. Ranking Alternatif
+    const rankedAlternatives = alternativeScores
+      .sort((a, b) => b.score - a.score)
+      .map((alt, index) => ({ ...alt, rank: index + 1 }));
+
+    // Set hasil
+    setResults({
+      criteriaWeights: criteriaWeights,
+      alternatives: rankedAlternatives,
+      alternativeWeightsByCriteria: alternativeWeightsByCriteria,
+      consistency: {
+        cr: CR,
+        ci: CI,
+        lambdaMax: lambdaMax,
+        isConsistent: isConsistent
+      }
+    });
+
+    toast({
+      title: "Success",
+      description: `Perhitungan AHP selesai! ${isConsistent ? 'Hasil konsisten (CR = ' + CR.toFixed(4) + ')' : 'Perhatian: Hasil tidak konsisten (CR = ' + CR.toFixed(4) + ')'}`,
+      variant: isConsistent ? "default" : "destructive"
+    });
+    
+    setCurrentStep(5);
+    setActiveTab('step-6');
+    
+  } catch (error) {
+    console.error("Error calculating AHP:", error);
+    toast({
+      title: "Error",
+      description: "Gagal menghitung AHP: " + error.message,
+      variant: "destructive"
+    });
+  } finally {
+    setIsCalculating(false);
+  }
+};
   const calculateProgress = () => {
     let progress = 0;
     switch (currentStep) {
